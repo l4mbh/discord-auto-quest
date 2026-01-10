@@ -1,0 +1,25 @@
+## Visual Studio / .NET
+
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userprefs
+*.launchsettings.json
+
+## Release Artifacts
+*.zip
+*.exe
+!DiscordQuestGUI.csproj
+
+## OS Specific
+.DS_Store
+Thumbs.db
+
+## IDEs
+.idea/
+.vscode/
+
+## Logs
+*.log

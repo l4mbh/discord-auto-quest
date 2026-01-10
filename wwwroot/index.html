@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Quest Auto-Complete</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div id="loadingText" class="loading-text">Loading...</div>
+        </div>
+    </div>
+
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <i class="fab fa-discord login-icon"></i>
+            <h1>Discord Quest Auto-Complete</h1>
+            <p>Automatically complete Discord quests</p>
+            <button id="btnLogin" class="btn-login">
+                <i class="fab fa-discord"></i> Login with Discord
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="main-app hidden">
+        <div class="header">
+            <div class="header-left">
+                <i class="fab fa-discord header-icon"></i>
+                <h1>Quest Auto-Complete</h1>
+            </div>
+            <div class="header-right">
+                <div class="account-selector" id="accountSelector">
+                    <div class="account-info" id="accountInfo">
+                        <img id="userAvatar" src="" alt="Avatar" class="user-avatar">
+                        <div class="user-details"
+                            style="display: flex; flex-direction: column; justify-content: center;">
+                            <span id="username">User</span>
+                            <div id="userBalance" class="user-balance hidden">
+                                <img src="https://cdn.discordapp.com/assets/content/39957396a3a99aa230ad8b925b03ccdf974e156a75357df8491e577903c1b782.png"
+                                    class="user-balance-icon" alt="Orbs">
+                                <span class="user-balance-text" id="userBalanceText">0</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down account-arrow"></i>
+                    </div>
+                    <div class="account-dropdown" id="accountDropdown">
+                        <div class="account-list" id="accountList">
+                            <!-- Account items will be populated by JavaScript -->
+                        </div>
+                        <div class="account-actions">
+                            <button id="btnAddAccount" class="btn-add-account">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Account</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="btnSettings" class="btn-icon"><i class="fas fa-cog"></i></button>
+            </div>
+        </div>
+
+        <!-- Quest Running Status Banner -->
+        <div id="questRunningBanner" class="quest-running-banner hidden">
+            <div class="running-indicator">
+                <div class="running-pulse"></div>
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="running-info">
+                <span class="running-title">Quests in Progress</span>
+                <span id="runningStatusText" class="running-status">Getting ready...</span>
+            </div>
+            <div class="running-stats">
+                <span id="runningQuestCount">0 quest(s)</span>
+                <button id="btnStopAll" class="btn-stop" title="Stop All">
+                    <i class="fas fa-stop"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="btnReload" class="btn-secondary">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button id="btnStartAll" class="btn-success">
+                <i class="fas fa-rocket"></i> Start All Accepted
+            </button>
+            <button id="btnStartSelected" class="btn-primary">
+                <i class="fas fa-play"></i> Start Selected
+            </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="quest-tabs">
+            <button class="tab active" data-tab="accepted">
+                <i class="fas fa-tasks"></i> Accepted
+            </button>
+            <button class="tab" data-tab="available">
+                <i class="fas fa-gift"></i> Available
+            </button>
+            <button class="tab" data-tab="completed">
+                <i class="fas fa-trophy"></i> Ready to Claim
+            </button>
+            <button class="tab" data-tab="history">
+                <i class="fas fa-history"></i> History
+            </button>
+        </div>
+
+        <!-- Quest Lists -->
+        <div class="content">
+            <!-- Accepted Quests Tab -->
+            <div id="acceptedQuestsTab" class="tab-content active">
+                <div id="acceptedQuestsList" class="quest-list"></div>
+            </div>
+
+            <!-- Available Quests Tab -->
+            <div id="availableQuestsTab" class="tab-content">
+                <div id="availableQuestsList" class="quest-list"></div>
+            </div>
+
+            <!-- Completed Quests Tab (Ready to Claim - loaded with main quests) -->
+            <div id="completedQuestsTab" class="tab-content">
+                <div id="completedQuestsHeader" class="quest-tab-header">
+                    <button id="btnOpenClaimWindow" class="btn-primary">
+                        <i class="fab fa-discord"></i> Claim in Discord
+                    </button>
+                </div>
+                <div id="completedQuestsList" class="quest-list"></div>
+
+                <!-- WebView for Discord quest-home -->
+                <div id="claimWindowContainer" class="claim-window-container hidden">
+                    <div class="claim-window-header">
+                        <h3><i class="fab fa-discord"></i> Discord Quest Claim</h3>
+                        <button id="btnCloseClaimWindow" class="btn-secondary">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                    <div id="claimWebViewHost" class="claim-webview-host">
+                        <!-- Loading indicator -->
+                        <div id="claimWebViewLoading" class="claim-webview-loading">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Loading Discord Quest Page...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab (All completed quests - lazy loaded) -->
+            <div id="historyQuestsTab" class="tab-content">
+                <div id="historyQuestsList" class="quest-list"></div>
+                <div id="historyLoadingMore" class="loading-more hidden">
+                    <i class="fas fa-spinner fa-spin"></i> Loading more...
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="statusText">Ready</span>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <button id="btnCloseSettings" class="btn-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="chkNotifications">
+                        <span>Enable Windows notifications</span>
+                    </label>
+                </div>
+                <!-- About section -->
+                <div class="about-section">
+                    <div class="about-divider"></div>
+                    <div class="about-content">
+                        <p class="about-text">
+                            Made with <span class="about-heart">♥</span> by a coding enthusiast
+                        </p>
+                        <p class="about-subtext">
+                            Always learning, always building
+                        </p>
+                        <a href="https://github.com/l4mbh" target="_blank" class="about-link">
+                            <i class="fab fa-github"></i>
+                            <span>l4mbh</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnSaveSettings" class="btn-primary">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+                <div class="footer-actions-right">
+                    <button id="btnClearCache" class="btn-danger-outline" title="Reset App Data">
+                        <i class="fas fa-trash-alt"></i> Clear Cache
+                    </button>
+                    <button id="btnLogout" class="btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Cache Confirmation Modal -->
+    <div id="clearCacheModal" class="modal hidden" style="z-index: 2000;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content danger-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Clear Cache?</h2>
+                <button id="btnCloseClearCache" class="btn-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-text">Are you sure you want to clear all cache and application data?</p>
+                <ul class="danger-list">
+                    <li>This will log you out of all accounts</li>
+                    <li>All settings will be reset</li>
+                    <li>The application will restart</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelClearCache" class="btn-secondary">Cancel</button>
+                <button id="btnConfirmClearCache" class="btn-danger-solid">
+                    <i class="fas fa-trash-alt"></i> Clear & Restart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

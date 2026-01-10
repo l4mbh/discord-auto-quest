@@ -1,0 +1,1668 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #2f3136;
+    color: #dcddde;
+    overflow: hidden;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #2f3136;
+    border-top-color: #5865f2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-text {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #dcddde;
+}
+
+/* Toastify Custom Styles */
+.toastify {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    border-radius: 8px !important;
+    padding: 16px 20px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.toast-success {
+    background: linear-gradient(135deg, #3ba55d 0%, #2d7d46 100%) !important;
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #ed4245 0%, #c53639 100%) !important;
+}
+
+.toast-warning {
+    background: linear-gradient(135deg, #faa61a 0%, #d18617 100%) !important;
+}
+
+.toast-info {
+    background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%) !important;
+}
+
+/* Login Screen */
+.login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2f3136;
+    z-index: 2000;
+}
+
+.login-container {
+    text-align: center;
+    max-width: 480px;
+    padding: 40px;
+}
+
+.login-icon {
+    font-size: 80px;
+    color: #5865f2;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+}
+
+.login-container h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.login-container p {
+    font-size: 16px;
+    color: #b9bbbe;
+    margin-bottom: 32px;
+}
+
+.login-logo {
+    font-size: 80px;
+    color: #5865f2;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: #b9bbbe;
+    margin-bottom: 32px;
+}
+
+.btn-login {
+    padding: 14px 32px;
+    background: #5865f2;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.btn-login:hover {
+    background: #4752c4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(88, 101, 242, 0.3);
+}
+
+.btn-login i {
+    font-size: 20px;
+}
+
+/* Main App */
+.main-app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* App Container */
+.app-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background: #202225;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1a1b1e;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-left i {
+    font-size: 24px;
+    color: #5865f2;
+}
+
+.header-left h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.header-icon {
+    font-size: 24px;
+    color: #5865f2;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* User Info */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    background: #2f3136;
+    border-radius: 20px;
+}
+
+/* User Profile */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #2f3136;
+    border-radius: 20px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #5865f2;
+}
+
+.username {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Buttons */
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2f3136;
+    color: #b9bbbe;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: #3ba55d;
+    color: #fff;
+}
+
+.btn-primary,
+.btn-success,
+.btn-danger {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #5865f2;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #4752c4;
+}
+
+.btn-success {
+    background: #3ba55d;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #2d7d46;
+}
+
+.btn-danger {
+    background: #ed4245;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #c53639;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #4f545c;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #5d6269;
+}
+
+/* Action Buttons */
+/* Quest Running Banner */
+.quest-running-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, rgba(59, 165, 93, 0.15) 100%);
+    border-bottom: 1px solid rgba(88, 101, 242, 0.3);
+    animation: bannerGlow 3s ease-in-out infinite;
+}
+
+@keyframes bannerGlow {
+    0%, 100% { background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, rgba(59, 165, 93, 0.15) 100%); }
+    50% { background: linear-gradient(135deg, rgba(88, 101, 242, 0.25) 0%, rgba(59, 165, 93, 0.25) 100%); }
+}
+
+.running-indicator {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.running-indicator i {
+    font-size: 20px;
+    color: #5865f2;
+    z-index: 2;
+    animation: iconBounce 1s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.running-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(88, 101, 242, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+.running-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.running-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5865f2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.running-status {
+    font-size: 14px;
+    color: #dcddde;
+    font-weight: 500;
+}
+
+.running-status.status-fade {
+    animation: statusFade 0.5s ease-out;
+}
+
+@keyframes statusFade {
+    0% { opacity: 0; transform: translateY(-5px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.running-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.running-stats span {
+    font-size: 13px;
+    color: #3ba55d;
+    font-weight: 600;
+    padding: 6px 12px;
+    background: rgba(59, 165, 93, 0.1);
+    border-radius: 12px;
+}
+
+.btn-stop {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(237, 66, 69, 0.1);
+    color: #ed4245;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-stop:hover {
+    background: #ed4245;
+    color: #fff;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #2f3136;
+    border-bottom: 1px solid #1a1b1e;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #3ba55d 0%, #2d8049 100%);
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #2d8049 0%, #246b3c 100%);
+    transform: translateY(-1px);
+}
+
+/* Quest Tabs */
+.quest-tabs {
+    display: flex;
+    background: #2f3136;
+    padding: 0 20px;
+    border-bottom: 1px solid #1a1b1e;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    background: #2f3136;
+    padding: 0 20px;
+    border-bottom: 1px solid #1a1b1e;
+}
+
+.tab {
+    padding: 12px 20px;
+    color: #b9bbbe;
+    font-weight: 500;
+    font-size: 14px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab:hover {
+    color: #dcddde;
+}
+
+.tab.active {
+    color: #fff;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #5865f2;
+}
+
+/* Tab Badge */
+.tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    margin-left: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: #5865f2;
+    border-radius: 9px;
+    animation: badgePop 0.3s ease-out;
+}
+
+.tab.active .tab-badge {
+    background: #fff;
+    color: #5865f2;
+}
+
+/* Unclaimed rewards badge - red pulse */
+.tab-badge.tab-badge-unclaimed {
+    background: #ed4245;
+    animation: badgePop 0.3s ease-out, unclaimedPulse 1.5s ease-in-out infinite;
+}
+
+.tab.active .tab-badge.tab-badge-unclaimed {
+    background: #ed4245;
+    color: #fff;
+}
+
+@keyframes badgePop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes unclaimedPulse {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(237, 66, 69, 0.6);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 0 6px rgba(237, 66, 69, 0);
+        transform: scale(1.05);
+    }
+}
+
+/* Tab pulse animation when quest completed */
+.tab-pulse {
+    animation: tab-pulse-glow 0.5s ease-in-out 6 !important;
+}
+
+@keyframes tab-pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+    50% {
+        box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.6);
+    }
+}
+
+/* Content */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+}
+
+/* Quest list is now grid-based - see responsive section below */
+
+/* Loading More */
+.loading-more {
+    text-align: center;
+    padding: 20px;
+    color: #72767d;
+    font-size: 14px;
+}
+
+/* Quest Card - Discord Style */
+.quest-card {
+    position: relative;
+    background: #2b2d31;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid #1e1f22;
+}
+
+.quest-card:hover {
+    background: #32353b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.quest-card.selected {
+    border-color: #5865f2;
+    box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.3);
+}
+
+.quest-card.running {
+    border-color: #3ba55d;
+}
+
+/* Quest actively running */
+.quest-card.quest-active {
+    border-color: #5865f2;
+    box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
+}
+
+/* Currently processing quest - with glow animation */
+.quest-card.quest-current {
+    border-color: #3ba55d;
+    box-shadow: 0 0 20px rgba(59, 165, 93, 0.3);
+    animation: questGlow 2s ease-in-out infinite;
+    position: relative;
+}
+
+.quest-card.quest-current::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3ba55d, #5865f2, #3ba55d);
+    background-size: 200% 100%;
+    animation: gradientMove 2s linear infinite;
+    z-index: 10;
+}
+
+@keyframes questGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(59, 165, 93, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(59, 165, 93, 0.4); }
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* Quest completed animation */
+.quest-card.quest-completed {
+    border-color: #3ba55d;
+    background: linear-gradient(135deg, rgba(59, 165, 93, 0.1) 0%, #2b2d31 100%);
+}
+
+.quest-card.completed {
+    opacity: 0.7;
+}
+
+/* Unclaimed quest - highlighted, ready to claim */
+.quest-card.quest-unclaimed {
+    opacity: 1;
+    border: 2px solid #ed4245;
+    animation: unclaimedQuestGlow 2s ease-in-out infinite;
+}
+
+.quest-card.quest-unclaimed::before {
+    content: '🎁 Ready to Claim!';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #ed4245 0%, #c43b3e 100%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    z-index: 10;
+    animation: claimBadgePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes unclaimedQuestGlow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(237, 66, 69, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(237, 66, 69, 0.5);
+    }
+}
+
+@keyframes claimBadgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Claimed quest - dimmed */
+.quest-card.quest-claimed {
+    opacity: 0.6;
+}
+
+.quest-card.quest-claimed::before {
+    content: '✓ Claimed';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    background: rgba(87, 242, 135, 0.2);
+    color: #57f287;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    z-index: 10;
+    border: 1px solid rgba(87, 242, 135, 0.3);
+}
+
+/* Quest in progress (has progress but not started in this session) */
+.quest-card.quest-in-progress {
+    border-color: #faa61a;
+}
+
+.quest-card.quest-in-progress::after {
+    content: 'In Progress';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    background: rgba(250, 166, 26, 0.9);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+/* Quest was running when app closed */
+.quest-card.quest-was-running {
+    border-color: #5865f2;
+    animation: wasRunningPulse 2s ease-in-out infinite;
+}
+
+.quest-card.quest-was-running::after {
+    content: 'Resume?';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    background: rgba(88, 101, 242, 0.9);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+@keyframes wasRunningPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(88, 101, 242, 0); }
+}
+
+/* Quest being tracked externally by Discord client */
+.quest-card.quest-externally-running {
+    border-color: #57f287;
+    animation: externallyRunningGlow 2s ease-in-out infinite;
+}
+
+.quest-card.quest-externally-running::after {
+    content: '🎮 Discord Tracking';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #57f287 0%, #2ea55b 100%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(87, 242, 135, 0.4);
+}
+
+@keyframes externallyRunningGlow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(87, 242, 135, 0.4),
+                    0 0 15px rgba(87, 242, 135, 0.2);
+    }
+    50% { 
+        box-shadow: 0 0 10px rgba(87, 242, 135, 0.6),
+                    0 0 25px rgba(87, 242, 135, 0.3);
+    }
+}
+
+/* Quest Hero Container */
+.quest-hero-container {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+}
+
+.quest-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.quest-hero-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #36393f 0%, #2f3136 100%);
+}
+
+.quest-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, #2b2d31 0%, transparent 100%);
+}
+
+.quest-game-logo {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    height: 32px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Quest Body */
+.quest-body {
+    padding: 12px 16px 16px;
+}
+
+.quest-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.quest-publisher {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #b5bac1;
+}
+
+.quest-publisher strong {
+    color: #f2f3f5;
+}
+
+.verified-badge {
+    width: 14px;
+    height: 14px;
+}
+
+.quest-ends {
+    color: #b5bac1;
+}
+
+.quest-type-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #5865f2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.quest-title-large {
+    font-size: 18px;
+    font-weight: 600;
+    color: #f2f3f5;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.quest-description {
+    font-size: 14px;
+    color: #b5bac1;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+/* Reward Badge - Positioned at bottom right of hero image */
+.quest-hero-container .reward-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Orbs Badge */
+.reward-badge-orbs {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.reward-badge-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffc107;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.reward-badge-orb {
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
+}
+
+/* Avatar/Item Badge - circular like Discord */
+.reward-badge-avatar {
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.reward-avatar-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #36393f;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reward-avatar-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.reward-avatar-default {
+    background: linear-gradient(135deg, #5865f2 0%, #7983f5 100%);
+}
+
+.reward-avatar-default i {
+    font-size: 24px;
+    color: #fff;
+}
+
+/* Quest Accept Button */
+.quest-accept-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(88, 101, 242, 0.3);
+}
+
+.quest-accept-btn:hover {
+    background: linear-gradient(135deg, #4752c4 0%, #3c45a5 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+}
+
+.quest-accept-btn:active {
+    transform: translateY(0);
+}
+
+.quest-accept-btn:disabled,
+.quest-accept-btn.loading {
+    background: linear-gradient(135deg, #4a4d55 0%, #3a3d45 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.quest-accept-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+.quest-accept-btn i {
+    font-size: 16px;
+}
+
+/* Quest Claim Button */
+.quest-claim-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f0b132 0%, #d4982f 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(240, 177, 50, 0.3);
+    margin-top: 8px;
+    animation: claimPulse 2s ease-in-out infinite;
+}
+
+@keyframes claimPulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(240, 177, 50, 0.3); }
+    50% { box-shadow: 0 4px 20px rgba(240, 177, 50, 0.5); }
+}
+
+.quest-claim-btn:hover {
+    background: linear-gradient(135deg, #d4982f 0%, #b8801a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(240, 177, 50, 0.5);
+    animation: none;
+}
+
+.quest-claim-btn:active {
+    transform: translateY(0);
+}
+
+.quest-claim-btn:disabled,
+.quest-claim-btn.loading {
+    background: linear-gradient(135deg, #4a4d55 0%, #3a3d45 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    animation: none;
+}
+
+.quest-claim-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+.quest-claim-btn.captcha-required {
+    background: linear-gradient(135deg, #ed4245 0%, #c43b3e 100%);
+}
+
+.quest-claim-btn.captcha-required:hover {
+    background: linear-gradient(135deg, #c43b3e 0%, #a03030 100%);
+}
+
+.quest-claim-btn i {
+    font-size: 16px;
+}
+
+/* Claimed Status */
+.quest-status.claimed-status {
+    color: #f0b132;
+    background: rgba(240, 177, 50, 0.1);
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 3px solid #f0b132;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quest-status.claimed-status i {
+    color: #f0b132;
+}
+
+/* Captcha hint when claim requires verification */
+.quest-captcha-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, rgba(114, 137, 218, 0.1) 100%);
+    border: 1px dashed rgba(88, 101, 242, 0.4);
+    border-radius: 8px;
+    margin-top: 8px;
+    color: #b5bac1;
+    font-size: 13px;
+}
+
+.quest-captcha-hint i {
+    color: #5865f2;
+    font-size: 16px;
+    animation: pointBounce 1s ease-in-out infinite;
+}
+
+@keyframes pointBounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+}
+
+.quest-captcha-hint span {
+    font-weight: 500;
+}
+
+/* Quest Progress Bar */
+.quest-progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background: #1e1f22;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.quest-progress-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #3ba55d 0%, #43b581 50%, #3ba55d 100%);
+    background-size: 200% 100%;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: progressShine 2s linear infinite;
+    box-shadow: 0 0 10px rgba(59, 165, 93, 0.5), 0 0 20px rgba(59, 165, 93, 0.3);
+}
+
+@keyframes progressShine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Glowing effect for active progress */
+.quest-card.quest-current .quest-progress-bar-fill {
+    box-shadow: 0 0 15px rgba(59, 165, 93, 0.7), 0 0 30px rgba(59, 165, 93, 0.4);
+    animation: progressShine 1.5s linear infinite, progressGlow 2s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(59, 165, 93, 0.5), 0 0 20px rgba(59, 165, 93, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(59, 165, 93, 0.8), 0 0 40px rgba(59, 165, 93, 0.5); }
+}
+
+.quest-progress-bar-container .quest-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Quest Status */
+.quest-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.completed-status {
+    background: rgba(59, 165, 93, 0.2);
+    color: #3ba55d;
+}
+
+/* Legacy support */
+.quest-progress {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.quest-progress svg {
+    transform: rotate(-90deg);
+}
+
+.quest-progress-circle {
+    fill: none;
+    stroke: #1a1b1e;
+    stroke-width: 8;
+}
+
+.quest-progress-bar {
+    fill: none;
+    stroke: #3ba55d;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s;
+}
+
+/* Quest Progress Circle */
+.quest-progress {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.quest-progress svg {
+    transform: rotate(-90deg);
+}
+
+.quest-progress-circle {
+    fill: none;
+    stroke: #1a1b1e;
+    stroke-width: 8;
+}
+
+.quest-progress-bar {
+    fill: none;
+    stroke: #3ba55d;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s;
+}
+
+.quest-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 18px;
+    color: #3ba55d;
+}
+
+/* Quest Info */
+.quest-info {
+    flex: 1;
+}
+
+.quest-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.quest-app {
+    font-size: 14px;
+    color: #b9bbbe;
+    margin-bottom: 8px;
+}
+
+.quest-details {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: #72767d;
+}
+
+.quest-detail {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Actions Bar */
+.actions {
+    background: #2f3136;
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    border-top: 1px solid #1a1b1e;
+}
+
+/* Status Bar */
+.status-bar {
+    background: #202225;
+    padding: 8px 20px;
+    font-size: 12px;
+    color: #72767d;
+    border-top: 1px solid #1a1b1e;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #36393f;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #2f3136;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: #b9bbbe;
+    font-size: 16px;
+}
+
+.btn-close:hover {
+    background: #ed4245;
+    color: #fff;
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.setting-item {
+    margin-bottom: 16px;
+}
+
+.setting-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.setting-item input[type="number"] {
+    width: 80px;
+    margin-left: 8px;
+    padding: 6px 8px;
+    background: #2f3136;
+    border: 1px solid #1a1b1e;
+    border-radius: 4px;
+    color: #dcddde;
+    font-family: inherit;
+}
+
+/* About section in settings */
+.about-section {
+    margin-top: 24px;
+}
+
+.about-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #3f4147 50%, transparent);
+    margin-bottom: 16px;
+}
+
+.about-content {
+    text-align: center;
+    padding: 8px 0;
+}
+
+.about-text {
+    color: #8e9297;
+    font-size: 12px;
+    margin: 0 0 4px 0;
+}
+
+.about-heart {
+    color: #ed4245;
+    display: inline-block;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.about-subtext {
+    color: #6d6f78;
+    font-size: 11px;
+    font-style: italic;
+    margin: 0 0 12px 0;
+}
+
+.about-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #8e9297;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+}
+
+.about-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.about-link i {
+    font-size: 14px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #2f3136;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* Reload Button with Countdown */
+.btn-reload-countdown {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    padding-left: 12px !important;
+}
+
+.btn-countdown-ring {
+    width: 24px;
+    height: 24px;
+    transform: rotate(-90deg);
+    flex-shrink: 0;
+}
+
+.countdown-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 3;
+}
+
+.countdown-ring-progress {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 100.53;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.btn-reload-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#countdownSeconds {
+    font-weight: 600;
+    min-width: 45px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2f3136;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #202225;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1a1b1e;
+}
+
+/* ============================================
+   RESPONSIVE GRID LAYOUT FOR QUESTS
+   ============================================ */
+
+/* Quest List - Grid Layout */
+.quest-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+/* Large screens - 3 columns */
+@media (min-width: 1200px) {
+    .quest-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Medium screens - 2 columns */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .quest-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Small screens - 1 column */
+@media (max-width: 767px) {
+    .quest-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .quest-hero-container {
+        height: 150px;
+    }
+    
+    .quest-body {
+        padding: 10px 14px 14px;
+    }
+    
+    .quest-title-large {
+        font-size: 16px;
+    }
+    
+    .quest-description {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+    
+    .quest-meta {
+        font-size: 11px;
+    }
+    
+    .reward-badge {
+        padding: 4px 8px;
+        bottom: 8px;
+        right: 8px;
+    }
+    
+    .reward-badge-text {
+        font-size: 12px;
+    }
+    
+    .reward-avatar-circle {
+        width: 44px;
+        height: 44px;
+        border-width: 2px;
+    }
+    
+    .quest-hint {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .quest-hint i {
+        font-size: 14px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+    .quest-hero-container {
+        height: 120px;
+    }
+    
+    .quest-game-logo {
+        height: 24px;
+    }
+    
+    .quest-hint {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    
+    .reward-avatar-circle {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* Tab content scroll */
+.tab-content {
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Content area */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Loading more indicator */
+.loading-more {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px;
+    color: #72767d;
+}

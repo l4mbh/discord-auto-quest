@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #2f3136;
+            color: white;
+            font-family: Arial;
+        }
+
+        h1 {
+            color: #5865f2;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #5865f2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>WebView2 Test</h1>
+    <p>If you see this, WebView2 is working!</p>
+    <button onclick="testClick()">Test Button</button>
+    <div id="status"></div>
+
+    <script>
+        document.getElementById('status').textContent = 'JavaScript is working!';
+
+        function testClick() {
+            alert('Button clicked!');
+            if (window.chrome && window.chrome.webview) {
+                document.getElementById('status').textContent = 'C# bridge available!';
+                window.chrome.webview.postMessage({ action: 'test' });
+            } else {
+                document.getElementById('status').textContent = 'No C# bridge!';
+            }
+        }
+    </script>
+</body>
+
+</html>
