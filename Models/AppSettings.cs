@@ -6,6 +6,7 @@ public class AppSettings
     public string? CurrentAccountId { get; set; }
     public bool EnableNotifications { get; set; } = true;
     public int AutoRefreshInterval { get; set; } = 5; // minutes
+    public bool MinimizeToTray { get; set; } = true; // Default: enabled
 }
 
 public class UserAccount

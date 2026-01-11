@@ -230,12 +230,18 @@ function loginSuccess(user) {
     // Update user profile
     updateCurrentUserDisplay(user);
 
-    // Check if we were adding a new account
-    if (window.addingNewAccount) {
-        showToast(`New account added: ${user.username}!`, 'success');
-        window.addingNewAccount = false; // Reset flag
-    } else {
-        showToast(`Welcome back, ${user.username}!`, 'success');
+    // Prevent duplicate toast for same user (in case loginSuccess called multiple times)
+    const userKey = `${user.id}_${user.username}`;
+    if (window.lastLoginToastUser !== userKey) {
+        window.lastLoginToastUser = userKey;
+
+        // Check if we were adding a new account
+        if (window.addingNewAccount) {
+            showToast(`New account added: ${user.username}!`, 'success');
+            window.addingNewAccount = false; // Reset flag
+        } else {
+            showToast(`Welcome back, ${user.username}!`, 'success');
+        }
     }
 
     updateStatus('Ready');
@@ -245,16 +251,19 @@ function loginSuccess(user) {
 }
 
 function updateCurrentUserDisplay(user) {
-    const username = `${user.username}#${user.discriminator}`;
-    document.getElementById('username').textContent = username;
-
-    // Set avatar
-    const avatarEl = document.getElementById('userAvatar');
-    if (user.avatar) {
-        avatarEl.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`;
-    } else {
-        avatarEl.src = `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+    // Discord new username system: discriminator "0" or empty means no discriminator
+    let displayName = user.username;
+    if (user.discriminator && user.discriminator !== '0') {
+        displayName = `${user.username}#${user.discriminator}`;
     }
+
+    document.getElementById('username').textContent = displayName;
+
+    const avatarUrl = user.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+        : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
+
+    document.getElementById('userAvatar').src = avatarUrl;
 
     // Update balance
     const balanceContainer = document.getElementById('userBalance');
@@ -407,21 +416,49 @@ function removeAccount(accountId) {
     }
 }
 
+// Clear all quests when switching account
+function clearAllQuests() {
+    console.log('[CLEAR ALL QUESTS] Triggered');
+
+    // Clear all quest lists DOM
+    ['acceptedQuestsList', 'availableQuestsList', 'completedQuestsList', 'historyQuestsList'].forEach(listId => {
+        const list = document.getElementById(listId);
+        if (list) {
+            console.log('[CLEAR ALL QUESTS] Clearing', listId, '- had', list.children.length, 'items');
+            list.innerHTML = '';
+        }
+    });
+
+    // Reset all quest arrays
+    console.log('[CLEAR ALL QUESTS] Resetting quest arrays');
+    allQuests = {
+        accepted: [],
+        available: [],
+        completed: [],
+        history: []
+    };
+
+    // Reset history state
+    historyQuestsState = {
+        loaded: false,
+        page: 0,
+        pageSize: 5,
+        hasMore: true,
+        loading: false
+    };
+
+    // Switch to accepted tab
+    console.log('[CLEAR ALL QUESTS] Switching to accepted tab');
+    const acceptedTab = document.querySelector('[data-tab="accepted"]');
+    if (acceptedTab) {
+        acceptedTab.click();
+        console.log('[CLEAR ALL QUESTS] Switched to accepted tab');
+    }
+}
+
 function onAccountsUpdated(data) {
     allAccounts = data.accounts || [];
     renderAccountSelector();
-
-    // Update current user display if active account changed
-    const activeAccount = allAccounts.find(acc => acc.isActive);
-    if (activeAccount && activeAccount.id !== currentUser?.id) {
-        updateCurrentUserDisplay(activeAccount);
-        currentUser = activeAccount;
-
-        // Reload quests for new account
-        loadQuests();
-        showToast(`Switched to ${activeAccount.username}`, 'success');
-    }
-
     hideLoading();
 }
 
@@ -1416,15 +1453,21 @@ function hideSettings() {
 
 function loadSettings(settings) {
     const chkNotifications = document.getElementById('chkNotifications');
+    const chkMinimizeToTray = document.getElementById('chkMinimizeToTray');
 
     if (chkNotifications) chkNotifications.checked = settings.enableNotifications;
+    if (chkMinimizeToTray && typeof settings.minimizeToTray !== 'undefined') {
+        chkMinimizeToTray.checked = settings.minimizeToTray;
+    }
 }
 
 function saveSettings() {
     const chkNotifications = document.getElementById('chkNotifications');
+    const chkMinimizeToTray = document.getElementById('chkMinimizeToTray');
 
     const settings = {
-        enableNotifications: chkNotifications?.checked || false
+        enableNotifications: chkNotifications?.checked || false,
+        minimizeToTray: chkMinimizeToTray?.checked !== false // Default to true
     };
 
     window.chrome.webview.postMessage({

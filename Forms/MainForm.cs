@@ -25,6 +25,12 @@ public partial class MainForm : Form
     private Queue<string> _questQueue = new();
     private bool _isProcessingQueue = false;
     private WebView2? _claimWebView;
+    
+    // Tray icon fields
+    private NotifyIcon? _trayIcon;
+    private string _currentQuestName = "";
+    private int _currentQuestProgress = 0;
+    private string _currentUsername = "";
 
     public MainForm()
     {
@@ -39,6 +45,12 @@ public partial class MainForm : Form
         _accountService = new AccountService(_configService);
         _authService = new DiscordAuthService();
         _notificationService = new NotificationService();
+        
+        // Initialize tray icon
+        InitializeTrayIcon();
+        
+        // Handle FormClosing event
+        this.FormClosing += MainForm_FormClosing;
     }
 
     private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -237,6 +249,26 @@ public partial class MainForm : Form
 
             // Send to UI - ensure on UI thread
             LogError("Sending loginSuccess to UI...");
+            
+            // Update current username for tray icon context menu
+            if (string.IsNullOrEmpty(userInfo.discriminator) || userInfo.discriminator == "0")
+            {
+                _currentUsername = userInfo.username;
+            }
+            else
+            {
+                _currentUsername = $"{userInfo.username}#{userInfo.discriminator}";
+            }
+            UpdateContextMenu();
+            
+            // Clear all quests only when switching account (not on first login)
+            // Check if there was a previous account by looking at service state
+            var hadPreviousAccount = !string.IsNullOrEmpty(_currentUsername);
+            if (hadPreviousAccount)
+            {
+                LogError("Switching account - clearing quests");
+                SendMessageToJS("clearAllQuests", new { });
+            }
 
             Action sendSuccess = () =>
             {
@@ -441,9 +473,28 @@ public partial class MainForm : Form
                 break;
 
             case "saveSettings":
-                var settings = JsonSerializer.Deserialize<AppSettings>(message["settings"].GetRawText());
-                if (settings != null)
-                    _configService.SaveSettings(settings);
+                if (message.ContainsKey("settings"))
+                {
+                    // Load current settings first
+                    var currentSettings = _configService.LoadSettings();
+                    
+                    // Parse the settings object from JS
+                    var settingsElement = message["settings"];
+                    
+                    // Update only the fields sent from JS
+                    if (settingsElement.TryGetProperty("enableNotifications", out var enableNotif))
+                    {
+                        currentSettings.EnableNotifications = enableNotif.GetBoolean();
+                    }
+                    
+                    if (settingsElement.TryGetProperty("minimizeToTray", out var minimizeToTray))
+                    {
+                        currentSettings.MinimizeToTray = minimizeToTray.GetBoolean();
+                    }
+                    
+                    // Save merged settings
+                    _configService.SaveSettings(currentSettings);
+                }
                 break;
 
             case "logout":
@@ -1004,6 +1055,16 @@ public partial class MainForm : Form
             else if (string.IsNullOrEmpty(e.ErrorMessage))
             {
                 LogError($"Sending progress to JS: {e.Percentage}%");
+                
+                // Update tray tooltip with current quest progress
+                var currentQuest = _acceptedQuests.FirstOrDefault(q => q.Id == e.QuestId);
+                if (currentQuest != null)
+                {
+                    _currentQuestName = currentQuest.Config?.Messages?.QuestName ?? "Current Quest";
+                    _currentQuestProgress = e.Percentage;
+                    UpdateTrayTooltip();
+                }
+                
                 SendMessageToJS("questProgress", new
                 {
                     questId = e.QuestId,
@@ -1044,7 +1105,8 @@ public partial class MainForm : Form
         SendMessageToJS("settingsLoaded", new
         {
             enableNotifications = settings.EnableNotifications,
-            autoRefreshInterval = settings.AutoRefreshInterval
+            autoRefreshInterval = settings.AutoRefreshInterval,
+            minimizeToTray = settings.MinimizeToTray
         });
     }
 
@@ -1253,8 +1315,272 @@ del ""%~f0""
         }
         catch (Exception ex)
         {
-            LogError($"Failed to perform clear cache: {ex.Message}");
-            SendToast("Failed to clear cache: " + ex.Message, "error");
+            LogError($"PerformClearCache error: {ex}");
+            SendToast($"Clear cache failed: {ex.Message}", "error");
         }
     }
+
+    #region Tray Icon Methods
+
+    private void InitializeTrayIcon()
+    {
+        try
+        {
+            _trayIcon = new NotifyIcon();
+
+            // Load icon from appicon.ico
+            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appicon.ico");
+            if (File.Exists(iconPath))
+            {
+                _trayIcon.Icon = new Icon(iconPath);
+            }
+            else
+            {
+                // Fallback to system icon
+                _trayIcon.Icon = SystemIcons.Application;
+                LogError("appicon.ico not found, using fallback icon");
+            }
+
+            _trayIcon.Text = "Discord Quest Auto-Complete";
+            _trayIcon.Visible = false; // Hidden by default, shown when minimized
+
+            // Double-click to restore
+            _trayIcon.DoubleClick += (s, e) => ShowMainForm();
+
+            // Create context menu
+            UpdateContextMenu();
+        }
+        catch (Exception ex)
+        {
+            LogError($"InitializeTrayIcon error: {ex}");
+        }
+    }
+
+    private void UpdateTrayTooltip()
+    {
+        if (_trayIcon == null) return;
+
+        try
+        {
+            string tooltip;
+            if (!string.IsNullOrEmpty(_currentQuestName) && _currentQuestProgress > 0)
+            {
+                tooltip = $"{_currentQuestName} - {_currentQuestProgress}%";
+            }
+            else
+            {
+                tooltip = "Discord Quest Auto-Complete";
+            }
+
+            // Tooltip max length is 63 characters
+            if (tooltip.Length > 63)
+            {
+                tooltip = tooltip.Substring(0, 60) + "...";
+            }
+
+            _trayIcon.Text = tooltip;
+        }
+        catch (Exception ex)
+        {
+            LogError($"UpdateTrayTooltip error: {ex}");
+        }
+    }
+
+    private void UpdateContextMenu()
+    {
+        if (_trayIcon == null) return;
+
+        try
+        {
+            var contextMenu = new ContextMenuStrip();
+            
+            // Apply Discord style - Segoe UI font
+            contextMenu.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            contextMenu.BackColor = Color.FromArgb(47, 49, 54); // Discord dark background
+            contextMenu.ForeColor = Color.FromArgb(220, 221, 222); // Discord light text
+            
+            // Remove image margin (white column on left)
+            contextMenu.ShowImageMargin = false;
+            contextMenu.ShowCheckMargin = false;
+            
+            // Use custom renderer for Discord-style hover
+            contextMenu.Renderer = new DiscordContextMenuRenderer();
+
+            // Current User (disabled, bold) - only if we have username
+            if (!string.IsNullOrEmpty(_currentUsername))
+            {
+                var userItem = new ToolStripMenuItem
+                {
+                    Text = _currentUsername,
+                    Enabled = false,
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(185, 187, 190) // Slightly dimmed for disabled
+                };
+                contextMenu.Items.Add(userItem);
+
+                // Separator
+                contextMenu.Items.Add(new ToolStripSeparator());
+            }
+
+            // Show
+            var showItem = new ToolStripMenuItem("Show", null, (s, e) => ShowMainForm());
+            showItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            contextMenu.Items.Add(showItem);
+
+            // Exit
+            var exitItem = new ToolStripMenuItem("Exit", null, (s, e) => ExitApplication());
+            exitItem.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            contextMenu.Items.Add(exitItem);
+
+            _trayIcon.ContextMenuStrip = contextMenu;
+        }
+        catch (Exception ex)
+        {
+            LogError($"UpdateContextMenu error: {ex}");
+        }
+    }
+
+    private void ShowMainForm()
+    {
+        try
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Maximized;
+            this.Activate();
+            
+            if (_trayIcon != null)
+            {
+                _trayIcon.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            LogError($"ShowMainForm error: {ex}");
+        }
+    }
+
+    private void ExitApplication()
+    {
+        try
+        {
+            // Stop all running quests
+            StopAllQuests();
+
+            // Cleanup tray icon
+            if (_trayIcon != null)
+            {
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            }
+
+            // Exit application
+            System.Windows.Forms.Application.Exit();
+        }
+        catch (Exception ex)
+        {
+            LogError($"ExitApplication error: {ex}");
+        }
+    }
+
+    private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+    {
+        try
+        {
+            // Check MinimizeToTray setting
+            var settings = _configService.LoadSettings();
+            if (settings.MinimizeToTray && e.CloseReason == CloseReason.UserClosing)
+            {
+                // Cancel close and minimize to tray instead
+                e.Cancel = true;
+                this.Hide();
+                
+                if (_trayIcon != null)
+                {
+                    _trayIcon.Visible = true;
+                    
+                    // Show balloon tip on first minimize
+                    if (!_trayIcon.Tag?.Equals("shown") == true)
+                    {
+                        _trayIcon.ShowBalloonTip(
+                            2000,
+                            "Discord Quest Auto-Complete",
+                            "Application minimized to tray. Double-click icon to restore.",
+                            ToolTipIcon.Info
+                        );
+                        _trayIcon.Tag = "shown";
+                    }
+                }
+            }
+            else
+            {
+                // Actually closing - cleanup
+                if (_trayIcon != null)
+                {
+                    _trayIcon.Visible = false;
+                    _trayIcon.Dispose();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LogError($"MainForm_FormClosing error: {ex}");
+        }
+    }
+
+    #endregion
+    
+    #region Discord Context Menu Renderer
+    
+    private class DiscordContextMenuRenderer : ToolStripProfessionalRenderer
+    {
+        public DiscordContextMenuRenderer() : base(new DiscordColorTable())
+        {
+        }
+
+        protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+        {
+            if (!e.Item.Selected)
+            {
+                // Not selected - use background color
+                using (var brush = new SolidBrush(Color.FromArgb(47, 49, 54)))
+                {
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+                }
+            }
+            else
+            {
+                // Selected/hover - use Discord blue-ish gray
+                using (var brush = new SolidBrush(Color.FromArgb(67, 70, 79)))
+                {
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+                }
+            }
+        }
+
+        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
+        {
+            // Discord-style separator
+            var rect = new Rectangle(3, e.Item.Height / 2, e.Item.Width - 6, 1);
+            using (var brush = new SolidBrush(Color.FromArgb(60, 63, 69)))
+            {
+                e.Graphics.FillRectangle(brush, rect);
+            }
+        }
+    }
+
+    private class DiscordColorTable : ProfessionalColorTable
+    {
+        public override Color MenuItemSelected => Color.FromArgb(67, 70, 79); // Discord hover color
+        public override Color MenuItemBorder => Color.FromArgb(47, 49, 54); // No border
+        public override Color MenuBorder => Color.FromArgb(32, 34, 37); // Darker border
+        public override Color MenuItemSelectedGradientBegin => Color.FromArgb(67, 70, 79);
+        public override Color MenuItemSelectedGradientEnd => Color.FromArgb(67, 70, 79);
+        public override Color MenuItemPressedGradientBegin => Color.FromArgb(67, 70, 79);
+        public override Color MenuItemPressedGradientEnd => Color.FromArgb(67, 70, 79);
+        public override Color ImageMarginGradientBegin => Color.FromArgb(47, 49, 54);
+        public override Color ImageMarginGradientMiddle => Color.FromArgb(47, 49, 54);
+        public override Color ImageMarginGradientEnd => Color.FromArgb(47, 49, 54);
+    }
+    
+    #endregion
 }

@@ -188,6 +188,12 @@
                         <span>Enable Windows notifications</span>
                     </label>
                 </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="chkMinimizeToTray" checked>
+                        <span>Minimize to tray on close</span>
+                    </label>
+                </div>
                 <!-- About section -->
                 <div class="about-section">
                     <div class="about-divider"></div>
@@ -249,6 +255,25 @@
     </div>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- WebView2 Message Handler -->
+    <script>
+        // Listen for messages from C# backend
+        if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.addEventListener('message', event => {
+                const message = event.data;
+                console.log('[WebView Message]', message.type, message.data);
+
+                // Dispatch to corresponding function
+                if (typeof window[message.type] === 'function') {
+                    window[message.type](message.data);
+                } else {
+                    console.warn('[WebView Message] No handler for:', message.type);
+                }
+            });
+        }
+    </script>
+
     <script src="app.js"></script>
 </body>
 
